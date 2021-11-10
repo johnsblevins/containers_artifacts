@@ -1,0 +1,1 @@
+az deployment sub create --location 'eastasia' --template-file build/main.json --what-if

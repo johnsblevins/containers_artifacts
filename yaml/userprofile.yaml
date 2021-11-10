@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userprofile-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: userprofile
+  template:
+    metadata:
+      labels:
+        app: userprofile
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: userprofile
+        image: registryyaf2729.azurecr.io/tripinsights/userprofile:1.0
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Production"
+          - name: SQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysecret
+                key: password
+          - name: SQL_SERVER
+            valueFrom:
+              secretKeyRef:
+                name: mysecret
+                key: server
+          - name: SQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: mysecret
+                key: username
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+          name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: userprofile
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: userprofile

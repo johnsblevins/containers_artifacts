@@ -1,0 +1,1 @@
+ bicep build bicep/main.bicep --outfile build/main.json
